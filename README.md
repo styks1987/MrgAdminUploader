@@ -2,6 +2,8 @@ This adds a frontend to upload and resize images in the Cakephp 2.x framework
 
 ## Dependencies
 
+* jQuery
+* jQuert UI
 * "mjohnson/uploader": "4.*"
 
 ## In your model
@@ -22,6 +24,7 @@ If you were adding this functionality to the slide model
 
 ## In your controller
 
+```php5
 	public function admin_edit($id = null) {
 		if (!$this->Slide->exists($id)) {
 			throw new NotFoundException(__('Invalid slide'));
@@ -47,9 +50,11 @@ If you were adding this functionality to the slide model
 		$sites = $this->Slide->Site->find('list', array('fields'=>array('id', 'name')));
 		$this->set(compact('sites'));
 	}
+```
 
 ## Include it in your view
 
+```php5
 	echo
 	$this->Html->div('row',
 		$this->Html->div('col-md-6 image_preview',
@@ -61,3 +66,4 @@ If you were adding this functionality to the slide model
 	$this->ImageEditor->init('Slide.Image', 'Image must be at least 1170x510 pixels').
 	$this->Form->end().
 	$this->Js->writeBuffer();
+```

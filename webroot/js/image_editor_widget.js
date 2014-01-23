@@ -2,7 +2,7 @@
 	// Admin section image cropping and image uploading frontend
 	// Taken and refactored into a widget from the tigers site
 	(function (jQuery, undefined) {
-		jQuery.widget("Merge.image_uploader",{
+		$.widget("Merge.image_uploader",{
 			options: {
 				max_width:1170,
 				max_height:510,

@@ -8,6 +8,7 @@
 
 		function init($model, $instructions='', $id='image_upload'){
 			// Load our required assets
+			$this->Html->script('MrgAdminUploader.jquery.upload.1.0.2', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.image_editor_widget', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.imageareaselect/jquery.imgareaselect', ['inline'=>false]);
 
@@ -26,7 +27,7 @@
 				$this->Html->tag('span',
 				$this->Form->input($image_model.'.img', array('type'=>'file', 'id'=>$id, 'class'=>$plural_class_name)).
 				$this->Form->input($image_model.'.model', array('type'=>'hidden', 'value'=>$parent_model)).
-				$this->Form->input($image_model.'.id', array('type'=>'hidden', 'value'=>($this->data[$image_model]['id'])?$this->data[$image_model]['id']:'')).
+				$this->Form->input($image_model.'.id', array('type'=>'hidden', 'value'=>(!empty($this->data[$image_model]['id']))?$this->data[$image_model]['id']:'')).
 				$this->Html->tag('p', $instructions, array('style'=>'margin:0;')).
 				$this->Form->hidden($image_model.'.image_storage', array('value'=>(isset($this->data[$image_model])) ? $this->data[$image_model]['img']:'')).
 				$this->Form->hidden($image_model.'.crop_x1', array('id'=>'crop_x')).
