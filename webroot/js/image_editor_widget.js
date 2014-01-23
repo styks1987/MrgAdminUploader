@@ -24,7 +24,7 @@
 				widget.element.change(function() {
 					$('.image_loader').toggle();
 					var input = widget._parse_cake_input_name(widget.element.attr('name'));
-					$(this).upload('/images/ajax_upload/'+input.model, function(res) {
+					$(this).upload('/admin/attachments/ajax_upload/'+input.model, function(res) {
 						res = $.parseJSON(res);
 						if (!res.error) {
 							$('#'+widget.options.image_select).attr('src', '/files/uploads/'+res.url);
