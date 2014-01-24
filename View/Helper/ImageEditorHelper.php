@@ -8,7 +8,7 @@
 
 		function init($model, $instructions='', $id='image_upload'){
 			// Load our required assets
-			$this->Html->css('MrgAdminUploader.imageareaselect/imgareaselect-animated.css', ['inline'=>false]);
+			$this->Html->css('MrgAdminUploader.imageareaselect/imgareaselect-animated', 'stylesheet', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.jquery.upload.1.0.2', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.image_editor_widget', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.imageareaselect/jquery.imgareaselect', ['inline'=>false]);
@@ -40,6 +40,26 @@
 				array('id'=>'editing_tools', 'style'=>'display:none;')
 			);
 		}
+
+		/**
+		 * Multi File Uploader
+		 *
+		 * Date Added: Fri, Jan 24, 2014
+		 */
+
+		function multi_file_init($foreign_key_id = 0, $model){
+			$this->Html->css('MrgAdminUploader.multifile_uploader', 'stylesheet', array("inline"=>false));
+			$this->Html->script('MrgAdminUploader.jquery.filedrop', array("inline"=>false));
+			$this->Html->script('MrgAdminUploader.multifile_uploader', array("inline"=>false));
+			return
+				$this->Html->div('',
+					$this->Html->div('message', 'Drop images here to upload'),
+					['id'=>'dropbox']
+				).
+				$this->Html->scriptBlock('window.attachment_foreign_key = '.$foreign_key_id.'; window.attachment_foreign_model = "'.$model.'";');
+
+		}
+
 	}
 
 ?>

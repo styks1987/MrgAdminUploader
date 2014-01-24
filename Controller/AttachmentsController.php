@@ -38,6 +38,53 @@
 			exit;
 		}
 
+
+		/**
+		 * upload multiple files
+		 *
+		 * Date Added: Fri, Jan 24, 2014
+		 */
+
+		public function admin_multifile_ajax_upload($foreign_key, $model='Other'){
+			$this->request->data['Attachment']['foreign_key'] = $foreign_key;
+			$this->request->data['Attachment']['model'] = $model;
+			if($this->Attachment->save($this->request->data)){
+				$image_name = $this->Attachment->field('thumb');
+				$return_data['status'] = 1;
+				$return_data['message'] = 'Your image was successfully updated';
+				$return_data['file_url'] = $image_name;
+			}else{
+				$errors = $this->Attachment->invalidFields();
+				$message = $errors['img'][0];
+				$return_data['status'] = 0;
+				$return_data['message'] = $message;
+			}
+			$this->_exit_status($return_data);
+		}
+
+
+		/**
+		 * get the file extension
+		 *
+		 * Date Added: Fri, Jan 24, 2014
+		 */
+
+		private function _get_extension($file_name){
+			$ext = explode('.', $file_name);
+			$ext = array_pop($ext);
+			return strtolower($ext);
+		}
+		/**
+		 * echo out json
+		 *
+		 * Date Added: Fri, Jan 24, 2014
+		 */
+
+		private function _exit_status($return_data){
+			echo json_encode($return_data);
+			exit;
+		}
+
 	}
 
 ?>
