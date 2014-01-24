@@ -147,7 +147,7 @@ $(function(){
 			'<div class="image_holder"><img src="<%= thumb %>" alt="<%= name %>" /></div>'+
 			'<div style="display:none;" property="id"><%= id %></div>'+
 			//'<h4 property="title" class="title"><%= title %></h4>'+
-			'<a href="/admin/attachments/edit/<%= id %>" class="btn btn-primary edit">Edit</a>'+
+			'<a href="/admin/mrg_admin_uploader/attachments/edit/<%= id %>" class="btn btn-primary edit">Edit</a>'+
 			'<div class="btn btn-danger delete" style="margin-left:10px;">Delete</div>'
 		),
 		events:{
@@ -179,7 +179,7 @@ $(function(){
 				i++;
 			});
 			console.log(ids);
-			$.ajax({url:'/admin/attachments/update_order',data: {data:ids}, method:'post'});
+			$.ajax({url:'/admin/mrg_admin_uploader/attachments/update_order',data: {data:ids}, method:'post'});
 		},
 
 		// return the selected image back to ckeditor
