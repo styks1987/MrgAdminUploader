@@ -13,7 +13,6 @@ $(function(){
         maxfiles: 40,
     	maxfilesize: 15, // in mb
 		url: '/admin/mrg_admin_uploader/attachments/multifile_ajax_upload/'+attachment_foreign_key+'/'+attachment_foreign_model,
-        //url: '/admin/project_images/upload/'+project_id,
 
         uploadFinished:function(i,file,response){
 			if (response.status) {
@@ -52,6 +51,7 @@ $(function(){
                 // file to be rejected
                 return false;
             }
+			return true
         },
 
         uploadStarted:function(i, file, len){
@@ -112,4 +112,152 @@ $(function(){
 	function display_url(file, response) {
 		$.data(file).find('.progressHolder').replaceWith('<p>'+response.message+'</p>');
 	}
+
+
+	// necessary for the project images uploading
+	AttachmentModel = Backbone.Model.extend({
+		defaults: {
+			attachment_foreign_key: attachment_foreign_key
+		},
+		url: '/mrg_admin_uploader/attachments',
+		sync: function(method, model, options) {
+			options = options || {};
+
+			switch (method) {
+				case 'delete':
+					options.url = '/attachments/'+model.id+'.json'
+					break;
+			}
+
+			return Backbone.sync.apply(this, arguments);
+		}
+	})
+
+	image = new AttachmentModel({
+		url:'/mrg_admin_uploader/attachments'
+	})
+
+
+	AttachmentView = Backbone.View.extend({
+		className: 'pod',
+		initialize: function(){
+			this.model.on('delete', this.deleteImage, this);
+		},
+		template: _.template(
+			'<div class="image_holder"><img src="<%= thumb %>" alt="<%= name %>" /></div>'+
+			'<div style="display:none;" property="id"><%= id %></div>'+
+			//'<h4 property="title" class="title"><%= title %></h4>'+
+			'<a href="/admin/attachments/edit/<%= id %>" class="btn btn-primary edit">Edit</a>'+
+			'<div class="btn btn-danger delete" style="margin-left:10px;">Delete</div>'
+		),
+		events:{
+			"click img":"_ckselect",
+			"click .delete":"deleteImage",
+			"drop":"reorder"
+		},
+
+		render: function () {
+			var attributes = this.model.toJSON();
+			this.$el.html(this.template(attributes));
+			this.$el.attr({'typeOf':'Image', 'about':'/attachments/'+this.model.get('id')});
+
+			return this;
+		},
+
+		deleteImage: function () {
+			if (confirm('Are you sure you want to delete this image?')) {
+				this.model.destroy();
+				this.remove();
+			}
+		},
+		// Needs to be refactored
+		reorder : function (event, index) {
+			ids = [];
+			i = 0
+			$('.image_collection').find('[property=id]').each(function () {
+				ids.push({Attachment:{id:$(this).html(),order_by:i}});
+				i++;
+			});
+			console.log(ids);
+			$.ajax({url:'/admin/attachments/update_order',data: {data:ids}, method:'post'});
+		},
+
+		// return the selected image back to ckeditor
+		_ckselect: function () {
+			//if (typeof CKeditorFuncNum != 'undefined') {
+				//window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, this.model.get('original'));
+				//window.close();
+			//}else{
+				// Not working needs help with choosing a specific image
+				//console.log(';here');
+				//window.selected_image = this.model.get('original');
+				//$('.image_editor_overlay').trigger('choose_image');
+			//}
+		}
+	});
+
+	ImageList = Backbone.Collection.extend({
+		url: '/mrg_admin_uploader/attachments.json',
+		model:AttachmentModel,
+		comparator: function(model) {
+			return model.get('order_by');
+		},
+		parse: function (response){
+			return response.attachments
+		}
+	});
+
+
+
+	attachmentList = new ImageList();
+
+	attachmentList.fetch({data:{attachment_foreign_key:attachment_foreign_key}});
+
+	AttachmentListView = Backbone.View.extend({
+		className:'image_collection',
+		initialize: function (){
+			var list = this;
+			this.collection.on('add', this.addOne, this);
+			this.collection.on('reset', this.addAll, this);
+			$(window).on('finished_upload', function () {
+				attachmentList.fetch({data:{attachment_foreign_key:attachment_foreign_key}});
+			})
+
+		},
+
+		addOne: function(image){
+			var imageView = new AttachmentView({model:image});
+			this.$el.attr({'rel':'hasPart', 'about':'/attachments/', 'draggable':true});
+			this.$el.append(imageView.render().el);
+		},
+		addAll: function (){
+			this.collection.forEach(this.addOne, this);
+		},
+
+
+		render: function (){
+			this.$el.children().remove();
+			this.addAll();
+			return this;
+		}
+	})
+
+	attachmentListView = new AttachmentListView({collection:attachmentList});
+
+	attachmentListView.render();
+
+	$('.attachments').html(attachmentListView.el);
+
+	// Needs to be refactored
+	$('.image_collection').sortable({stop:function (event, ui) {
+		ui.item.trigger('drop');
+	}});
+
+
+
+
+
+
+
+
 });

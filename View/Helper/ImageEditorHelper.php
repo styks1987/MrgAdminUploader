@@ -50,13 +50,15 @@
 		function multi_file_init($foreign_key_id = 0, $model){
 			$this->Html->css('MrgAdminUploader.multifile_uploader', 'stylesheet', array("inline"=>false));
 			$this->Html->script('MrgAdminUploader.jquery.filedrop', array("inline"=>false));
+			$this->Html->script('MrgAdminUploader.jquery.nested_sortable', array("inline"=>false));
 			$this->Html->script('MrgAdminUploader.multifile_uploader', array("inline"=>false));
 			return
 				$this->Html->div('',
 					$this->Html->div('message', 'Drop images here to upload'),
 					['id'=>'dropbox']
 				).
-				$this->Html->scriptBlock('window.attachment_foreign_key = '.$foreign_key_id.'; window.attachment_foreign_model = "'.$model.'";');
+				$this->Html->scriptBlock('window.attachment_foreign_key = '.$foreign_key_id.'; window.attachment_foreign_model = "'.$model.'";').
+				$this->Html->div('attachments', '');
 
 		}
 

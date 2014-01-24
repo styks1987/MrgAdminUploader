@@ -41,8 +41,6 @@ class Attachment extends AppModel {
 		'MrgAdminUploader.CropCoordinates'
 	);
 
-	var $belongsTo = array('Site');
-
 	/**
 		*  Function Name: beforeUpload
 		*  Description: This is called by the uploader plugin

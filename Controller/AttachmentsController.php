@@ -1,5 +1,40 @@
 <?php
 	class AttachmentsController extends AppController{
+		var $components = array('RequestHandler');
+
+
+		public function index() {
+			$conds = array();
+			if(!empty($this->request->query['foreign_key'])){
+				$conds['Attachment.foreign_key'] = $this->request->query['foreign_key'];
+			}
+			$attachments = Hash::extract($this->Attachment->find('all', array('conditions'=>$conds)), '{n}.Attachment');
+			$this->set(array(
+				'attachments' => $attachments,
+				'_serialize' => array('attachments')
+			));
+		}
+
+		/**
+		 * return all images for a particular id
+		 *
+		 * Date Added: Fri, Jan 24, 2014
+		 */
+
+		//public function all($foreign_key = 1, $model) {
+		//	$this->ProjectImage->recursive = 0;
+		//	$this->paginate = array('conditions'=>array('foreign_key'=>$foreign_key));
+		//	$attachments = $this->paginate();
+		//	if($this->RequestHandler->isAjax()){
+		//		$attachments = Hash::extract($attachments, '{n}.'.$model);
+		//		echo json_encode($attachments);
+		//		exit;
+		//	}else{
+		//		$this->set(compact('attachments'));
+		//	}
+		//}
+
+
 		/**
 		 * upload a tmp file to the server so that we can let the user modify it
 		 *
