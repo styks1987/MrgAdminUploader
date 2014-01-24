@@ -29,7 +29,7 @@
 				$this->Form->input($image_model.'.model', array('type'=>'hidden', 'value'=>$parent_model)).
 				$this->Form->input($image_model.'.id', array('type'=>'hidden', 'value'=>(!empty($this->data[$image_model]['id']))?$this->data[$image_model]['id']:'')).
 				$this->Html->tag('p', $instructions, array('style'=>'margin:0;')).
-				$this->Form->hidden($image_model.'.image_storage', array('value'=>(isset($this->data[$image_model])) ? $this->data[$image_model]['img']:'')).
+				$this->Form->hidden($image_model.'.image_storage', array('id'=>'image_storage', 'value'=>(isset($this->data[$image_model])) ? $this->data[$image_model]['img']:'')).
 				$this->Form->hidden($image_model.'.crop_x1', array('id'=>'crop_x')).
 				$this->Form->hidden($image_model.'.crop_y1', array('id'=>'crop_y')).
 				$this->Form->hidden($image_model.'.crop_width', array('id'=>'crop_width')).
