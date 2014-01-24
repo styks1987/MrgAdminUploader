@@ -8,7 +8,7 @@
 
 		function init($model, $instructions='', $id='image_upload'){
 			// Load our required assets
-			$this->Html->css('imageareaselect/imgareaselect-animated.css', ['inline'=>false]);
+			$this->Html->css('MrgAdminUploader.imageareaselect/imgareaselect-animated.css', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.jquery.upload.1.0.2', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.image_editor_widget', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.imageareaselect/jquery.imgareaselect', ['inline'=>false]);
