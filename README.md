@@ -6,6 +6,11 @@ This adds a frontend to upload and resize images in the Cakephp 2.x framework
 * jQuert UI
 * "mjohnson/uploader": "4.*"
 
+## Included Javascript Files
+
+* ImageAreaSelect v1.0 (http://odyniec.net/projects/imgareaselect/)
+* jQuery.upload v1.0.2 (http://lagoscript.org)
+
 ## In your model
 
 If you were adding this functionality to the slide model
