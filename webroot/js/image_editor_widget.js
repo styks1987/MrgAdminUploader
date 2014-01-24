@@ -103,7 +103,8 @@
 			enable_image_editing: function (el){
 				widget = this
 				if($('#editing_tools').is('*')){
-					$.when($(el).parent().html($('#editing_tools'))).then(widget.update_selection());
+					$.when($(el).parent().html($('#editing_tools')),
+						   $('#editing_tools').css('display', 'block')).then(widget.update_selection());
 				}
 			},
 			/* Remove the selection values for a new image */

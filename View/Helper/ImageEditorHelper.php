@@ -37,7 +37,7 @@
 				$this->Form->hidden($image_model.'.crop_height', array('id'=>'crop_height')).
 				$this->Html->image((!empty($this->data[$image_model]['img'])) ? $this->data[$image_model]['img']:'no_image.gif', array('id'=>'image_select', 'width'=>'300px', 'alt'=>'Choose an image and it will appear here'))
 				),
-				array('id'=>'editing_tools')
+				array('id'=>'editing_tools', 'style'=>'display:none;')
 			);
 		}
 	}

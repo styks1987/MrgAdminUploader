@@ -11,10 +11,25 @@ This adds a frontend to upload and resize images in the Cakephp 2.x framework
 * ImageAreaSelect v1.0 (http://odyniec.net/projects/imgareaselect/)
 * jQuery.upload v1.0.2 (http://lagoscript.org)
 
+## CakeHelpers
+
+* JsHelper
+
 ## Attachment Schema
 
 You will need to have a table called attachments. A schema file is provided.
 cake schema create --plugin MrgAdminUploader
+
+## In your layout
+
+```php5
+	// You must include these files
+	echo $this->Html->script('jquery.1.10.js');
+	echo $this->Html->script('jquery-ui-1.10.4.core.widget.js');
+
+	// You must also have this at the bottom of your view
+	echo $this->Js->writeBuffer();
+```
 
 ## In your model
 
@@ -57,7 +72,6 @@ If you were adding this functionality to the slide model
 			$options = array('conditions' => array('Slide.' . $this->Slide->primaryKey => $id));
 			$this->request->data = $this->Slide->find('first', $options);
 		}
-		$sites = $this->Slide->Site->find('list', array('fields'=>array('id', 'name')));
 		$this->set(compact('sites'));
 	}
 ```
