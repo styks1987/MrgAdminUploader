@@ -12,7 +12,9 @@
 				crop_width:'crop_width',
 				crop_height:'crop_height',
 				image_select:'image_select',
-				tmp_upload_url:'/admin/mrg_admin_uploader/attachments/ajax_upload'
+				tmp_upload_url:'/admin/mrg_admin_uploader/attachments/ajax_upload',
+				// Must match what is in the Attachments controller
+				tmp_upload_dir:'/files/uploads/'
 			},
 
 			_create:function (){
@@ -25,17 +27,17 @@
 				widget.element.change(function() {
 					$('.image_loader').toggle();
 					var input = widget._parse_cake_input_name(widget.element.attr('name'));
-					$(this).upload(widget.options.tmp_upload_url+'/'+input.model, function(res) {
+					$(this).upload(widget.options.tmp_upload_url+'/'+input.model, {tmp_upload_dir:widget.options.tmp_upload_dir}, function(res) {
 						res = $.parseJSON(res);
 						if (!res.error) {
-							$('#'+widget.options.image_select).attr('src', '/files/uploads/'+res.url);
+							$('#'+widget.options.image_select).attr('src', widget.options.tmp_upload_dir+'/'+res.url);
 								var new_img = new Image();
 								new_img.src = $('#'+widget.options.image_select).attr('src');
 								new_img.onload  = function(){
 									img_width = new_img.width;
 									img_height = new_img.height;
 									if(img_width >= widget.options.max_width && img_height >= widget.options.max_height){
-										if($('#image_storage').is('*')){$('#image_storage').val('/files/uploads/'+res.url)}
+										if($('#image_storage').is('*')){$('#image_storage').val(widget.options.tmp_upload_dir+'/'+res.url)}
 										widget._clear_selection(this);
 										widget._setup_imageselect(this);
 									}else{

@@ -11,8 +11,8 @@
 		*  Date Added: Tue, Feb 19, 2013
 		*/
 		public function admin_ajax_upload($model = 'Image'){
-			if(!is_dir(APP.'webroot/files/uploads/')){
-				mkdir(APP.'webroot/files/uploads/');
+			if(!is_dir(APP.'webroot'.$this->request->data['tmp_upload_dir'])){
+				mkdir(APP.'webroot'.$this->request->data['tmp_upload_dir']);
 			}
 			$tmp_filename = $_FILES['data']['tmp_name'][$model]['img'];
 			$filename = $_FILES['data']['name'][$model]['img'];
@@ -20,7 +20,7 @@
 
 			$name = time().$filename;
 			if(!$error){
-				if(move_uploaded_file($tmp_filename, APP.'webroot/files/uploads/'.$name)){
+				if(move_uploaded_file($tmp_filename, APP.'webroot'.$this->request->data['tmp_upload_dir'].'/'.$name)){
 					$response = array('url'=>$name, 'error'=>false);
 					echo json_encode($response);
 				}else{
