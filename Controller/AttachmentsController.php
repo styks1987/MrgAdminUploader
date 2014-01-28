@@ -3,7 +3,7 @@
 		var $components = array('RequestHandler');
 
 
-		public function index() {
+		public function admin_index() {
 			$conds = array();
 			if(!empty($this->request->query['foreign_key'])){
 				$conds['Attachment.foreign_key'] = $this->request->query['foreign_key'];
@@ -13,6 +13,19 @@
 				'attachments' => $attachments,
 				'_serialize' => array('attachments')
 			));
+		}
+
+		public function admin_delete($id) {
+			if ($this->Attachment->delete($id)) {
+				$message = 'Deleted';
+			} else {
+				$message = 'Error';
+			}
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			exit;
 		}
 
 		/**

@@ -119,13 +119,13 @@ $(function(){
 		defaults: {
 			attachment_foreign_key: attachment_foreign_key
 		},
-		url: '/mrg_admin_uploader/attachments',
+		url: '/admin/mrg_admin_uploader/attachments',
 		sync: function(method, model, options) {
 			options = options || {};
 
 			switch (method) {
 				case 'delete':
-					options.url = '/attachments/'+model.id+'.json'
+					options.url = '/admin/mrg_admin_uploader/attachments/delete/'+model.id
 					break;
 			}
 
@@ -134,7 +134,7 @@ $(function(){
 	})
 
 	image = new AttachmentModel({
-		url:'/mrg_admin_uploader/attachments'
+		url:'/admin/mrg_admin_uploader/attachments'
 	})
 
 
@@ -159,7 +159,7 @@ $(function(){
 		render: function () {
 			var attributes = this.model.toJSON();
 			this.$el.html(this.template(attributes));
-			this.$el.attr({'typeOf':'Image', 'about':'/attachments/'+this.model.get('id')});
+			this.$el.attr({'typeOf':'Image', 'about':'/admin/mrg_admin_uploader/attachments/'+this.model.get('id')});
 
 			return this;
 		},
@@ -197,7 +197,7 @@ $(function(){
 	});
 
 	ImageList = Backbone.Collection.extend({
-		url: '/mrg_admin_uploader/attachments.json',
+		url: '/admin/mrg_admin_uploader/attachments.json',
 		model:AttachmentModel,
 		comparator: function(model) {
 			return model.get('order_by');
@@ -227,7 +227,7 @@ $(function(){
 
 		addOne: function(image){
 			var imageView = new AttachmentView({model:image});
-			this.$el.attr({'rel':'hasPart', 'about':'/attachments/', 'draggable':true});
+			this.$el.attr({'rel':'hasPart', 'about':'/admin/mrg_admin_uploader/attachments/', 'draggable':true});
 			this.$el.append(imageView.render().el);
 		},
 		addAll: function (){
