@@ -48,7 +48,7 @@
 		 * Date Added: Thu, Feb 13, 2014
 		 */
 
-		function editor($data){
+		function editor($data = []){
 			return
 				$this->Html->image((!empty($data['Image']['resized']) && file_exists(WWW_ROOT.$data['Image']['resized'])) ? $data['Image']['resized']:'no_image.gif').
 				$this->Html->link('Edit Image', 'javascript:void(0)', array('onclick'=>'$("#image_upload.images").image_uploader("enable_image_editing", this)'));
