@@ -41,6 +41,7 @@ class Attachment extends AppModel {
 		'MrgAdminUploader.CropCoordinates'
 	);
 
+
 	/**
 		*  Function Name: beforeUpload
 		*  Description: This is called by the uploader plugin

@@ -6,7 +6,7 @@
 
 		var $helpers = array('Html', 'Form', 'Js');
 
-		function init($model, $instructions='', $id='image_upload'){
+		function init($model, $instructions='', $id='image_upload', $image_uploader_options = []){
 			// Load our required assets
 			$this->Html->css('MrgAdminUploader.imageareaselect/imgareaselect-animated', 'stylesheet', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.jquery.upload.1.0.2', ['inline'=>false]);
@@ -20,7 +20,7 @@
 			// We need to instantiate the javascript
 			// $this->Js->writeBuffer(); required in the view
 
-			$this->Js->buffer("jQuery('#".$id.".".$plural_class_name."').image_uploader();");
+			$this->Js->buffer("jQuery('#".$id.".".$plural_class_name."').image_uploader(".json_encode($image_uploader_options).");");
 
 
 			return
@@ -39,6 +39,19 @@
 				),
 				array('id'=>'editing_tools', 'style'=>'display:none;')
 			);
+		}
+
+		/**
+		 * the editor box
+		 * this will diplsay the editor
+		 *
+		 * Date Added: Thu, Feb 13, 2014
+		 */
+
+		function editor($data){
+			return
+				$this->Html->image((!empty($data['Image']['resized']) && file_exists(WWW_ROOT.$data['Image']['resized'])) ? $data['Image']['resized']:'no_image.gif').
+				$this->Html->link('Edit Image', 'javascript:void(0)', array('onclick'=>'$("#image_upload.images").image_uploader("enable_image_editing", this)'));
 		}
 
 		/**
