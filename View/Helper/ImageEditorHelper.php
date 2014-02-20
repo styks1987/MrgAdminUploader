@@ -35,8 +35,7 @@
 				$this->Form->hidden($image_model.'.crop_y1', array('id'=>'crop_y')).
 				$this->Form->hidden($image_model.'.crop_width', array('id'=>'crop_width')).
 				$this->Form->hidden($image_model.'.crop_height', array('id'=>'crop_height')).
-				$this->Html->image((!empty($this->data[$image_model]['img'])) ? $this->data[$image_model]['img']:'no_image.gif', array('id'=>'image_select', 'width'=>'300px', 'alt'=>'Choose an image and it will appear here'))
-				),
+				$this->Html->image((!empty($this->data[$image_model]['img'])) ? $this->data[$image_model]['img']:'no_image.gif', array('id'=>'image_select', 'width'=>'300px', 'alt'=>'Choose an image and it will appear here'))),
 				array('id'=>'editing_tools', 'style'=>'display:none;')
 			);
 		}
@@ -49,8 +48,13 @@
 		 */
 
 		function editor($data = []){
+			$image = ((!empty($data['Image']['resized']) && file_exists(WWW_ROOT.$data['Image']['resized'])))?
+				$this->Html->image( $this->data['Image']['resized'])
+				:
+				'<div class="no_image" style="text-align:center; padding-top:10%; width:100%; background:#efefef; border:solid 1px #333; min-height:200px;">--No Image--</div>';
+
 			return
-				$this->Html->image((!empty($data['Image']['resized']) && file_exists(WWW_ROOT.$data['Image']['resized'])) ? $data['Image']['resized']:'no_image.gif').
+				$image.
 				$this->Html->link('Edit Image', 'javascript:void(0)', array('onclick'=>'$("#image_upload.images").image_uploader("enable_image_editing", this)'));
 		}
 
