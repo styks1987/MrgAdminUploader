@@ -33,7 +33,11 @@ class Attachment extends AppModel {
 						'location'=>'center'
 					)
 				)
-			)
+			),
+			'file'=>[
+				'finalPath'=> '/files/docs/',
+				'dbColumn'=>'img'
+			]
 		),
 		// Persist our coordintates
 		// Requires Uploader

@@ -133,6 +133,45 @@
 			exit;
 		}
 
+		// NEEDS TO BE ITS OK PLUGIN
+		// CKEDITOR FUNCTIONALITY
+
+		/**
+		*  Function Name: ckbrowse
+		*  Description: Browse the images available on server through ckeditor
+		*  Date Added: Tue, Jul 09, 2013
+		*/
+		public function ckbrowse(){
+			$this->layout = 'Image.browse';
+			$this->Attachment->recursive = 0;
+			$this->set('attachments', $this->paginate());
+		}
+
+		/**
+			*  Function Name: ckupload
+			*  Description: Upload from within ckeditor
+			*  Date Added: Tue, Jul 09, 2013
+		*/
+		public function ckupload(){
+			$data['Attachment'] = [
+				'model'=>'CKEDITOR',
+				'foreign_key'=>0,
+				'file'=>$_FILES['upload']
+			];
+			//debug($data); exit;
+			if($this->Attachment->save($data)){
+				$image_name = $this->Attachment->field('img');
+				echo '<script type="text/javascript">window.parent.CKEDITOR.tools.callFunction('.$this->params->query['CKEditorFuncNum'].', "'.$image_name.'");</script>';
+				exit;
+			}else{
+				echo '<div style="height:100px; width:200px;">Something went wrong while uploading</div>';
+				exit;
+			}
+
+		}
+
+		// CKEDITOR FUNCTIONALITY END
+
 	}
 
 ?>
