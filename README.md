@@ -42,6 +42,24 @@ If you were adding this functionality to the slide model
 			'foreignKey'=>'foreign_key',
 			'conditions'=>[
 				'Image.model'=>'Slide'
+			],
+			// This allows you to control the transformations and settings
+			// For the uploader behavior
+			'Behaviors'=>[
+				'Attachment'=>[
+					'img'=>[
+						'transforms'=>[
+							'resized'=>[
+								'width'=>1170,
+								'height'=>510
+							],
+							'thumb'=>[
+								'width'=>192,
+								'height'=>192
+							]
+						]
+					]
+				]
 			]
 		]
 	);
@@ -50,17 +68,25 @@ If you were adding this functionality to the slide model
 ## In your controller
 
 ```php5
+	public $components = ['MrgAdminUploader.ImageEditor'];
+	public $helpers = ['MrgAdminUploader.ImageEditor'];
+	
 	public function admin_edit($id = null) {
 		if (!$this->Slide->exists($id)) {
 			throw new NotFoundException(__('Invalid slide'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
 
-			if(empty($this->request->data['Image']['img']['name']) && !empty($this->request->data['Image']['image_storage'])){
-				// No new file was uploaded so lets persist the old one.
-				// If they made transformations, we will catch that too.
-				$this->request->data['Image']['img'] = 'http://'.$_SERVER['SERVER_NAME'].$this->request->data['Image']['image_storage'];
-			}
+			// If the user has uploaded an iamge before
+			// make sure it does not get deleted if no image
+			// was uploaded
+
+			// Also, if transformations were made
+			// This persists that
+			$this->ImageEditor->persist_image();
+			// Set the attachment settings
+			// This may need to be moved.
+			$this->ImageEditor->behavior_settings();
 
 			if ($this->Slide->saveAll($this->request->data)) {
 				$this->Session->setFlash(__('The slide has been saved'));
@@ -72,7 +98,9 @@ If you were adding this functionality to the slide model
 			$options = array('conditions' => array('Slide.' . $this->Slide->primaryKey => $id));
 			$this->request->data = $this->Slide->find('first', $options);
 		}
-		$this->set(compact('sites'));
+		// This loades our options for display
+		$imageEditorOptions = $this->ImageEditor->get_attachment_options();
+		$this->set(compact('imageEditorOptions'));
 	}
 ```
 
@@ -82,12 +110,11 @@ If you were adding this functionality to the slide model
 	echo
 	$this->Html->div('row',
 		$this->Html->div('col-md-6 image_preview',
-			$this->Html->image((!empty($this->data['Image']['resized']) && file_exists(WWW_ROOT.$this->data['Image']['resized'])) ? $this->data['Image']['resized']:'no_image.gif').
-			$this->Html->link('Edit Image', 'javascript:void(0)', array('onclick'=>'$("#image_upload.images").image_uploader("enable_image_editing", this)'))
+			$this->ImageEditor->editor($this->data)
 		)
 	).
 	$this->Html->div('row', $this->Html->div('col-md-12', $this->Form->end(array('label'=>'Save', 'class'=>'btn btn-success')))).
-	$this->ImageEditor->init('Slide.Image', 'Image must be at least 1170x510 pixels').
+$this->ImageEditor->init('Slide.Image', 'Image must be at least '.$imageEditorOptions['width'].'x'.$imageEditorOptions['height'].' pixels', 'image_upload', $imageEditorOptions).
 	$this->Form->end().
 	$this->Js->writeBuffer();
 ```
