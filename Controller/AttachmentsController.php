@@ -94,6 +94,21 @@
 		 */
 
 		public function admin_multifile_ajax_upload($foreign_key, $model='Other'){
+			// Get the image file settings for the upload
+
+			// TODO make this more abstract
+			if($model != 'Other'){
+				$behavior = 'Attachment';
+				$class = 'Image';
+				App::import('Model', $model);
+				$this->$model = new $model();
+				$this->Attachment->Behaviors->{$behavior}->settings['Attachment'] = hash::merge(
+					$this->Attachment->Behaviors->{$behavior}->settings['Attachment'],
+					$this->$model->hasMany[$class]['Behaviors'][$behavior]
+				);
+			}
+
+
 			$this->request->data['Attachment']['foreign_key'] = $foreign_key;
 			$this->request->data['Attachment']['model'] = $model;
 			if($this->Attachment->save($this->request->data)){
