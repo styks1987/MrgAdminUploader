@@ -211,7 +211,7 @@ $(function(){
 
 	attachmentList = new ImageList();
 
-	attachmentList.fetch({data:{attachment_foreign_key:attachment_foreign_key}});
+	attachmentList.fetch({data:{foreign_key:attachment_foreign_key, model:attachment_foreign_model}});
 
 	AttachmentListView = Backbone.View.extend({
 		className:'image_collection',
@@ -220,7 +220,7 @@ $(function(){
 			this.collection.on('add', this.addOne, this);
 			this.collection.on('reset', this.addAll, this);
 			$(window).on('finished_upload', function () {
-				attachmentList.fetch({data:{attachment_foreign_key:attachment_foreign_key}});
+				attachmentList.fetch({data:{foreign_key:attachment_foreign_key, model:attachment_foreign_model}});
 			})
 
 		},

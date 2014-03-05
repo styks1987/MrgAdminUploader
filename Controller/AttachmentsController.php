@@ -7,6 +7,7 @@
 			$conds = array();
 			if(!empty($this->request->query['foreign_key'])){
 				$conds['Attachment.foreign_key'] = $this->request->query['foreign_key'];
+				$conds['Attachment.model'] = $this->request->query['model'];
 			}
 			$attachments = Hash::extract($this->Attachment->find('all', array('conditions'=>$conds)), '{n}.Attachment');
 			$this->set(array(
