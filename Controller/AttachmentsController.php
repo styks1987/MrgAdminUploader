@@ -188,6 +188,31 @@
 
 		// CKEDITOR FUNCTIONALITY END
 
+
+		/**
+		 * upload to the attachments database without tying it to anything
+		 *
+		 * Date Added: Fri, Mar 28, 2014
+		 */
+
+		public function file_upload($model = 'Empty', $key= 0, $field_name = 'upload'){
+			$data['Attachment'] = [
+				'model'=>$model,
+				'foreign_key'=>$key,
+				'file'=>$_FILES[$field_name]
+			];
+
+			if($this->Attachment->save($data)){
+				$url = $this->Attachment->field('img');
+				$this->_exit_status(['url'=>$url, 'status'=>1, 'attachment_id'=>$this->Attachment->id]);
+				exit;
+			}else{
+				$this->_exit_status(['status'=>0]);
+				exit;
+			}
+		}
+
+
 	}
 
 ?>
