@@ -79,6 +79,34 @@
 
 		}
 
+		/**
+		 * single field init
+		 *
+		 * Date Added: Fri, Mar 28, 2014
+		 */
+
+		function single_file_upload($name = 'upload', $options){
+			$this->Html->script('MrgAdminUploader.jquery.upload.1.0.2', ['inline'=>false]);
+			$options = json_encode(array_merge(['name'=>$name], $options));
+			$url = '/mrg_admin_uploader/attachments/file_upload/';
+			$this->Js->buffer("
+				$('#".$name."').change(function () {
+					$(this).upload(
+						'".$url."',".$options.",
+						// Once the upload has completed we need to process it
+						function(res) {
+							res = $.parseJSON(res);
+							if (res.status) {
+								alert('file uploaded!');
+							}else{
+								alert(res.error);
+							}
+
+						})
+				});
+			");
+			return $this->Form->file($name, array('name'=>$name, 'id'=>$name));
+		}
 	}
 
 ?>

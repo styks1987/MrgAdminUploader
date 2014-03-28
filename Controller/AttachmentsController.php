@@ -195,11 +195,14 @@
 		 * Date Added: Fri, Mar 28, 2014
 		 */
 
-		public function file_upload($model = 'Empty', $key= 0, $field_name = 'upload'){
+		public function file_upload(){
+			$defaults = ['model'=>'Empty', 'foreign_key'=>0, 'name'=>'upload'];
+			$options = array_merge($defaults, $this->request->data);
+
 			$data['Attachment'] = [
-				'model'=>$model,
-				'foreign_key'=>$key,
-				'file'=>$_FILES[$field_name]
+				'model'=>$options['model'],
+				'foreign_key'=>$options['foreign_key'],
+				'file'=>$_FILES[$options['name']]
 			];
 
 			if($this->Attachment->save($data)){
@@ -207,7 +210,7 @@
 				$this->_exit_status(['url'=>$url, 'status'=>1, 'attachment_id'=>$this->Attachment->id]);
 				exit;
 			}else{
-				$this->_exit_status(['status'=>0]);
+				$this->_exit_status(['status'=>0, 'error'=>'We could not upload your file. Please check the filesize and try again.']);
 				exit;
 			}
 		}
