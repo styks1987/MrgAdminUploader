@@ -81,31 +81,54 @@
 
 		/**
 		 * single field init
+		 * special options that will be passed to the upload function
+		 * @option callback - A javascript function that will be called after upload
+		 * @option types - what file types are accepted
 		 *
 		 * Date Added: Fri, Mar 28, 2014
 		 */
 
 		function single_file_upload($name = 'upload', $options){
 			$this->Html->script('MrgAdminUploader.jquery.upload.1.0.2', ['inline'=>false]);
-			$options = json_encode(array_merge(['name'=>$name], $options));
+			$options = array_merge(['name'=>$name, 'callback'=>'after_single_file_upload', 'label'=>'Upload'], $options);
+			$json_options = json_encode($options);
 			$url = '/mrg_admin_uploader/attachments/file_upload/';
 			$this->Js->buffer("
+				$('#".$name."_upload_button').click(function () {
+					$('#".$name."').click();
+				})
+
 				$('#".$name."').change(function () {
 					$(this).upload(
-						'".$url."',".$options.",
+						'".$url."',".$json_options.",
 						// Once the upload has completed we need to process it
 						function(res) {
 							res = $.parseJSON(res);
-							if (res.status) {
-								alert('file uploaded!');
-							}else{
-								alert(res.error);
+							if(res.status){
+								var files = this.files;
+								var name = files[0].name;
+								document.querySelector('#".$name."_file').innerHTML = name;
+								$('<input id=\"'+res.field+'_url\" type=\"hidden\" value=\"'+res.url+'\" name=\"data['+res.model+']['+res.field+'_url]\" />').insertAfter('#'+res.field);
+								$('#".$name."_close').click(function () {
+									$('#".$name."').val('');
+									$('.".$name."_single_file_list').hide();
+									$('#'+res.field+'_url').remove();
+								})
+								$('.".$name."_single_file_list').show();
 							}
 
-						})
+							".$options['callback']."(res);
+						}.bind(this))
 				});
 			");
-			return $this->Form->file($name, array('name'=>$name, 'id'=>$name));
+			return
+				$this->Html->tag('div',	$options['label'], array('class'=>'btn btn-primary', 'id'=>$name.'_upload_button')).
+				$this->Form->file($name, array('name'=>$name, 'id'=>$name)).
+				$this->Html->div($name.'_single_file_list',
+					$this->Html->tag('span','', array('class'=>'single_file_title', 'id'=>$name.'_file')).
+					$this->Html->image('MrgAdminUploader.close.png', array('class'=>'single_file_close_button', 'id'=>$name.'_close')),
+					['style'=>'display:none;']
+				);
 		}
 	}
 

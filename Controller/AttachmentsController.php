@@ -199,6 +199,14 @@
 			$defaults = ['model'=>'Empty', 'foreign_key'=>0, 'name'=>'upload'];
 			$options = array_merge($defaults, $this->request->data);
 
+			$filename = $_FILES[$options['name']]['name'];
+			$extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+			if(!strstr($this->request->data['types'], $extension)){
+				$this->_exit_status(['status'=>0, 'error'=>'You have tried to upload an invalid file type. Accepted file types are '.$this->request->data['types']]);
+				exit;
+			}
+
 			$data['Attachment'] = [
 				'model'=>$options['model'],
 				'foreign_key'=>$options['foreign_key'],
@@ -207,7 +215,7 @@
 
 			if($this->Attachment->save($data)){
 				$url = $this->Attachment->field('img');
-				$this->_exit_status(['url'=>$url, 'status'=>1, 'attachment_id'=>$this->Attachment->id]);
+				$this->_exit_status(['field'=>$options['name'], 'model'=>$options['model'], 'url'=>$url, 'status'=>1, 'attachment_id'=>$this->Attachment->id]);
 				exit;
 			}else{
 				$this->_exit_status(['status'=>0, 'error'=>'We could not upload your file. Please check the filesize and try again.']);
