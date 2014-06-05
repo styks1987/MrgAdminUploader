@@ -119,11 +119,14 @@ $(function(){
 		defaults: {
 			attachment_foreign_key: attachment_foreign_key
 		},
-		url: '/admin/mrg_admin_uploader/attachments',
+		url: '/admin/mrg_admin_uploader/attachments.json',
 		sync: function(method, model, options) {
 			options = options || {};
 
 			switch (method) {
+				case 'update':
+					options.url = '/admin/mrg_admin_uploader/attachments/update/'+model.id
+					break;
 				case 'delete':
 					options.url = '/admin/mrg_admin_uploader/attachments/delete/'+model.id
 					break;
@@ -134,7 +137,7 @@ $(function(){
 	})
 
 	image = new AttachmentModel({
-		url:'/admin/mrg_admin_uploader/attachments'
+		url:'/admin/mrg_admin_uploader/attachments.json'
 	})
 
 
@@ -146,14 +149,16 @@ $(function(){
 		template: _.template(
 			'<div class="image_holder"><img src="<%= thumb %>" alt="<%= name %>" /></div>'+
 			'<div style="display:none;" property="id"><%= id %></div>'+
-			//'<h4 property="title" class="title"><%= title %></h4>'+
-			'<a href="/admin/mrg_admin_uploader/attachments/edit/<%= id %>" class="btn btn-primary edit">Edit</a>'+
-			'<div class="btn btn-danger delete" style="margin-left:10px;">Delete</div>'
+			'<h4 property="title" class="title">Title<br /><input class="form-control" name="title" value="<%= title %>" /></h4>'+
+			'<p property="caption" class="caption">Comments<br /><input class="form-control" name="caption" value="<%= caption %>" /></p>'+
+			'<div class="btn btn-danger delete">Delete</div>'
 		),
 		events:{
 			"click img":"_ckselect",
 			"click .delete":"deleteImage",
-			"drop":"reorder"
+			"drop":"reorder",
+			'change input[name="title"]' : 'updateAttachment',
+			'change input[name="caption"]' : 'updateAttachment'
 		},
 
 		render: function () {
@@ -162,6 +167,14 @@ $(function(){
 			this.$el.attr({'typeOf':'Image', 'about':'/admin/mrg_admin_uploader/attachments/'+this.model.get('id')});
 
 			return this;
+		},
+
+		updateAttachment : function (e) {
+			parent = $(e.target).closest('.pod')
+			title = parent.find('input[name="title"]').val();
+			caption = parent.find('input[name="caption"]').val();
+			attachment = new AttachmentModel({id:this.model.get('id'), title:title, caption:caption});
+			attachment.save();
 		},
 
 		deleteImage: function () {

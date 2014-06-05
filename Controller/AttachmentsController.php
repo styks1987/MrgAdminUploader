@@ -29,6 +29,21 @@
 			exit;
 		}
 
+		public function admin_update($id) {
+			if($this->request->is('post') || $this->request->is('put') ){
+				if ($this->Attachment->save($this->request->data)) {
+					$message = 'Deleted';
+				} else {
+					$message = 'Error';
+				}
+			}
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			exit;
+		}
+
 		/**
 		 * return all images for a particular id
 		 *
