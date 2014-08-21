@@ -88,7 +88,7 @@
 						}
 						// Don't know the fakepath in the filename field.
 						if ($(widget.options.image_upload).is('*')) {
-							$(widget.options.image_upload).val($(widget.options.image_upload).val().replace("C:\\fakepath\\", ""))
+							//$(widget.options.image_upload).val($(widget.options.image_upload).val().replace("C:\\fakepath\\", ""))
 						}
 					});
 				});
@@ -128,12 +128,17 @@
 				var x2 = (parseFloat($(widget.options.crop_x).val()) + parseFloat($(widget.options.crop_width).val())) / scaled_x;
 				var y2 = (parseFloat($(widget.options.crop_y).val()) + parseFloat($(widget.options.crop_height).val())) / scaled_y;
 
+
 				if(isNaN(x1) || isNaN(x2) || isNaN(y1) || isNaN(y2)){
+					if (!widget.options.max_height) {
+						widget.options.max_height = widget.options.max_width
+					}
 					// If the image hasn't been uploaded yet
 					x1 = y1 = 0;
 					x2 = widget.options.max_width / scaled_x;
 					y2 = widget.options.max_height / scaled_y;
 				}
+
 
 				$(widget.options.image_select).imgAreaSelect({x1:x1, x2:x2, y1:y1, y2:y2, minWidth: Math.round(widget.options.max_width / scaled_x), minHeight: Math.round( widget.options.max_height / scaled_y), aspectRatio:widget.options.aspect, handles: true, onSelectEnd:widget._set_dimensions});
 
