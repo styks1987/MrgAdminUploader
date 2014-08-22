@@ -107,6 +107,25 @@
 						   $('#editing_tools').css('display', 'block')).then(widget.update_selection());
 				}
 			},
+			delete_image: function (el){
+				widget = this
+				if (confirm('This image will be instantly deleted. Are you sure you want to delete this image?')) {
+					if($('#editing_tools').is('*')){
+						id = $('input[name="data[Image][id]"]').val();
+						$.ajax({
+							url:'/admin/mrg_admin_uploader/attachments/delete/'+id,
+							complete: function (res) {
+								$('input[name^="data[Image]"]').val('');
+								$(widget.options.image_storage).val('');
+								$(widget.options.image_select).attr('src', '');
+								$.when($(el).parent().html($('#editing_tools')),
+									   $('#editing_tools').css('display', 'block')).then(widget.update_selection());
+							}
+						})
+
+					}
+				}
+			},
 			/* Remove the selection values for a new image */
 			/* Without this, changing an image sometimes causes wrong cropping */
 			_clear_selection:function (){
