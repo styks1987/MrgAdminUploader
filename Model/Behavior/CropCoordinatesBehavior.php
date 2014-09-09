@@ -13,37 +13,48 @@
 		}
 		// Set the correct location for the resized and thumb sizes. 
 		function editableImageBeforeUpload($Model, $options){
+			$this->model = $Model;
 			$options['append'] = time();
-			if(!empty($Model->data[$Model->alias]['crop_x1'])){
-				// To make sure the aspect ratio is correct, we need to determine which side is the biggest
-				// And use the smallest size for the thumbnail size
-				// This wouldn't be a problem if the image was the same aspect ratio.
-				if($Model->data[$Model->alias]['crop_width'] >= $Model->data[$Model->alias]['crop_height']){
-					$size = $Model->data[$Model->alias]['crop_height'];
-				}else{
-					$size = $Model->data[$Model->alias]['crop_width'];
-				}
-				// Needs to be updated to find best possible image size
-				// Use the coordinates to get the proper scaling
-				// crop is based off of resized aspect. Need to recalibrate aspect for thumb based on thumb height and width.
+			if(!empty($this->model->data[$this->model->alias]['crop_x1'])){
 
-				//debug($Model->data[$Model->alias]);
+				$options['transforms']['thumb']['location'] = 'center';
 
-				//$width_multiplier = number_format($Model->data[$Model->alias]['crop_width']/$options['transforms']['resized']['width'], 0);
-				//$height_multiplier = number_format($Model->data[$Model->alias]['crop_height']/$options['transforms']['resized']['height'], 0);
+				// Has to be crop otherwise it will not modify the image
+				$options['transforms']['resized']['aspect'] = false;
+				$options['transforms']['resized']['method'] = 'crop';
 
-				//$thumb_crop_coords[] = $options['transforms']['thumb']['width'] * $width_multiplier;
-				//$thumb_crop_coords[] = $options['transforms']['thumb']['height'] * $height_multiplier;
-				$options['transforms']['thumb']['location'] = 'center';/*array_merge(array_slice(array_values($Model->data[$Model->alias]), 0 ,2), $thumb_crop_coords);*/
+				$options = $this->set_height_width($options);
 
-				//debug($options['transforms']['thumb']['location'] );
-				//exit;
 				$options['transforms']['resized']['location'] = [
-																  $Model->data[$Model->alias]['crop_x1'],
-																  $Model->data[$Model->alias]['crop_y1'],
-																  $Model->data[$Model->alias]['crop_width'],
-																  $Model->data[$Model->alias]['crop_height']
+																  $this->model->data[$this->model->alias]['crop_x1'],
+																  $this->model->data[$this->model->alias]['crop_y1'],
+																  $this->model->data[$this->model->alias]['crop_width'],
+																  $this->model->data[$this->model->alias]['crop_height']
 																];
+
+			}
+			return $options;
+		}
+
+		/**
+		 * So if height is 0, set the correct height based on the aspect of the crop
+		 *
+		 * Date Added: Thu, Aug 21, 2014
+		 */
+
+
+		function set_height_width($options){
+			$set_height = $options['transforms']['resized']['height'];
+			$set_width = $options['transforms']['resized']['width'];
+			if($set_height == 0){
+				$crop_width = $this->model->data[$this->model->alias]['crop_width'] - $this->model->data[$this->model->alias]['crop_x1'];
+				$crop_height = $this->model->data[$this->model->alias]['crop_height'] - $this->model->data[$this->model->alias]['crop_y1'];
+
+				$set_height = $set_width * $crop_height / $crop_width;
+				if($set_height < 0){
+					$set_height = $set_height * -1;
+				}
+				$options['transforms']['resized']['height'] = $set_height;
 			}
 			return $options;
 		}

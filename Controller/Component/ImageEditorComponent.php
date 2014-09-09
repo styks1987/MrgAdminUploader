@@ -30,7 +30,6 @@ class ImageEditorComponent extends Component{
 	 */
 
 	public function behavior_settings($class = 'Image', $behavior = 'Attachment'){
-
 		$this->Controller->{$this->Controller->modelClass}->Image->Behaviors->{$behavior}->settings[$class] = hash::merge(
 			$this->Controller->{$this->Controller->modelClass}->Image->Behaviors->{$behavior}->settings[$class],
 			$this->Controller->{$this->Controller->modelClass}->hasOne[$class]['Behaviors'][$behavior]
@@ -45,10 +44,15 @@ class ImageEditorComponent extends Component{
 	 */
 	public function get_attachment_options(){
 		$settings = $this->Controller->{$this->Controller->modelClass}->hasOne['Image']['Behaviors']['Attachment']['img']['transforms']['resized'];
+		$height = (!empty($settings['height']))? $settings['height'] : false;
+		$width = (!empty($settings['width']))? $settings['width'] : false;
+		$aspect = ($height && $width)? $width.':'.$height : false;
+
 		$image_editor_settings = [
-				'max_width'=>$settings['width'], 'width'=>$settings['width'],
-				'max_height'=>$settings['height'], 'height'=>$settings['height'],
-				'aspect'=>$settings['width'].':'.$settings['height']];
+				'max_width'=>$width, 'width'=>$width,
+				'max_height'=>$height, 'height'=>$height,
+				'aspect'=>$aspect
+			];
 		return $image_editor_settings;
 	}
 }

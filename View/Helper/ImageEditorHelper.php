@@ -55,7 +55,8 @@
 
 			return
 				$image.
-				$this->Html->link('Edit Image', 'javascript:void(0)', array('onclick'=>'$("#image_upload.images").image_uploader("enable_image_editing", this)'));
+				$this->Html->link('Edit Image', 'javascript:void(0)', array('class'=>'btn btn-primary', 'onclick'=>'$("#image_upload.images").image_uploader("enable_image_editing", this)')).
+				$this->Html->link('Delete Image', 'javascript:void(0)', array('class'=>'btn btn-danger', 'onclick'=>'$("#image_upload.images").image_uploader("delete_image", this)'));
 		}
 
 		/**
