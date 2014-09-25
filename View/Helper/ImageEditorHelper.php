@@ -8,6 +8,7 @@
 
 		function init($model, $instructions='', $id='image_upload', $image_uploader_options = []){
 			// Load our required assets
+			$this->Html->css('MrgAdminUploader.image_editor', 'stylesheet', ['inline'=>false]);
 			$this->Html->css('MrgAdminUploader.imageareaselect/imgareaselect-animated', 'stylesheet', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.jquery.upload.1.0.2', ['inline'=>false]);
 			$this->Html->script('MrgAdminUploader.image_editor_widget', ['inline'=>false]);
@@ -48,15 +49,22 @@
 		 */
 
 		function editor($data = []){
-			$image = ((!empty($data['Image']['resized']) && file_exists(WWW_ROOT.$data['Image']['resized'])))?
-				$this->Html->image( $this->data['Image']['resized'])
-				:
-				'<div class="no_image" style="text-align:center; padding-top:10%; width:100%; background:#efefef; border:solid 1px #333; min-height:200px;">--No Image--</div>';
+			if((!empty($data['Image']['resized']) && file_exists(WWW_ROOT.$data['Image']['resized']))){
+				$image = $this->Html->image( $this->data['Image']['resized']);
+				$delete = $this->Html->link('Delete Image', 'javascript:void(0)', array('class'=>'btn btn-danger delete_image', 'onclick'=>'$("#image_upload.images").image_uploader("delete_image", this)'));
+			}else{
+				$image = '<div class="no_image" style="text-align:center; padding-top:10%; width:100%; background:#efefef; border:solid 1px #333; min-height:200px;">--No Image--</div>';
+				$delete = '';
+			}
 
 			return
-				$image.
-				$this->Html->link('Edit Image', 'javascript:void(0)', array('class'=>'btn btn-primary', 'onclick'=>'$("#image_upload.images").image_uploader("enable_image_editing", this)')).
-				$this->Html->link('Delete Image', 'javascript:void(0)', array('class'=>'btn btn-danger', 'onclick'=>'$("#image_upload.images").image_uploader("delete_image", this)'));
+				$this->Html->div('image_editing_box',
+					$this->Html->div('editing_options',
+						$this->Html->link('Edit Image', 'javascript:void(0)', array('class'=>'btn btn-primary edit_image', 'onclick'=>'$("#image_upload.images").image_uploader("enable_image_editing", this)')).
+						$delete
+					).
+					$image
+				);
 		}
 
 		/**

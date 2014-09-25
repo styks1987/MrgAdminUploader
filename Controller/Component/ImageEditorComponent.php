@@ -8,6 +8,33 @@ class ImageEditorComponent extends Component{
 		$this->Controller = $controller;
 	}
 
+
+	public function beforeRender(Controller $controller){
+		parent::beforeRender($controller);
+		if($controller->Auth->user('role') == 1){
+			$imageEditorOptions = $this->get_attachment_options();
+			$controller->set(compact('imageEditorOptions'));
+		}
+	}
+
+	/**
+	 * this is not an internal function. You are required to add this to the controller before you save the data
+	 *
+	 * Date Added: Thu, Sep 25, 2014
+	 */
+
+	public function beforeSave(){
+		// If the user has uploaded an image before
+		// make sure it does not get deleted if no image
+		// was uploaded
+		// Also, if transformations were made
+		// This persists that
+		$this->persist_image();
+		// Set the attachment settings
+		// This may need to be moved.
+		$this->behavior_settings();
+	}
+
 	/**
 	 * persist an already uploaded image
 	 * if they made transform changes, persist that too

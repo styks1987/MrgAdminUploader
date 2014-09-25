@@ -1,0 +1,14 @@
+/* ================================================ */
+/* === Upload Buttons === */
+/* ================================================ */
+.image_editing_box{position: relative;}
+.image_editing_box .editing_options{ padding: 5px;position: absolute; top: 0; right:0; background: rgba(0,0,0,.5)}
+.image_editing_box .editing_options .btn{margin-right:5px;}
+.image_editing_box .editing_options .btn:last-of-type{margin-right: 0;}
+
+
+/* ================================================ */
+/* === Image Preview === */
+/* ================================================ */
+
+.image_editing_box img{width:100%;}

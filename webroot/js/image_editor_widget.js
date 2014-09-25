@@ -2,6 +2,10 @@
 	// Admin section image cropping and image uploading frontend
 	// Uses ImageAreaSelect and jquery.upload plugins
 	(function (jQuery, undefined) {
+		if (typeof $.widget == 'undefined') {
+			alert('You are missing the jquery widget plugin. The image editor will not work');
+		}
+
 		$.widget("Merge.image_uploader",{
 			options: {
 				// min width of the image
@@ -103,8 +107,8 @@
 			enable_image_editing: function (el){
 				widget = this
 				if($('#editing_tools').is('*')){
-					$.when($(el).parent().html($('#editing_tools')),
-						   $('#editing_tools').css('display', 'block')).then(widget.update_selection());
+					$.when($(el).parent().parent().parent().html($('#editing_tools')),
+					$('#editing_tools').css('display', 'block')).then(widget.update_selection());
 				}
 			},
 			delete_image: function (el){
