@@ -46,7 +46,14 @@
 		function set_height_width($options){
 			$set_height = $options['transforms']['resized']['height'];
 			$set_width = $options['transforms']['resized']['width'];
+
+			$cropped_height = $this->model->data[$this->model->alias]['crop_height'];
+			$cropped_width = $this->model->data[$this->model->alias]['crop_width'];
+
 			if($set_height == 0){
+				$height = $cropped_height * $set_width / $cropped_width;
+				$options['transforms']['resized']['height'] = $height;
+			}/*elseif(1==2){
 				$crop_width = $this->model->data[$this->model->alias]['crop_width'] - $this->model->data[$this->model->alias]['crop_x1'];
 				$crop_height = $this->model->data[$this->model->alias]['crop_height'] - $this->model->data[$this->model->alias]['crop_y1'];
 
@@ -55,7 +62,7 @@
 					$set_height = $set_height * -1;
 				}
 				$options['transforms']['resized']['height'] = $set_height;
-			}
+			}*/
 			return $options;
 		}
 	}
