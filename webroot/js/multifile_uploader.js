@@ -10,7 +10,7 @@ $(function(){
         // The name of the $_FILES entry:
         paramname:'data[Attachment][img]',
 
-        maxfiles: 40,
+        maxfiles: 200,
     	maxfilesize: 15, // in mb
 		url: '/admin/mrg_admin_uploader/attachments/multifile_ajax_upload/'+attachment_foreign_key+'/'+attachment_foreign_model,
 
@@ -32,7 +32,7 @@ $(function(){
                     showMessage('Your browser does not support HTML5 file uploads!');
                     break;
                 case 'TooManyFiles':
-                    alert('Too many files! Please select 5 at most!');
+                    alert('Too many files! Please select '+this.maxfiles+' at most!');
                     break;
                 case 'FileTooLarge':
                     alert(file.name+' is too large! Please upload files up to 2mb.');

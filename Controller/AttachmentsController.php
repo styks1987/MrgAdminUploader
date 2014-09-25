@@ -4,12 +4,15 @@
 
 
 		public function admin_index() {
-			$conds = array();
+			$conds = $order = array();
 			if(!empty($this->request->query['foreign_key'])){
 				$conds['Attachment.foreign_key'] = $this->request->query['foreign_key'];
 				$conds['Attachment.model'] = $this->request->query['model'];
 			}
-			$attachments = Hash::extract($this->Attachment->find('all', array('conditions'=>$conds)), '{n}.Attachment');
+			if($this->Attachment->hasField('order_by')){
+				$order = 'Attachment.order_by ASC';
+			}
+			$attachments = Hash::extract($this->Attachment->find('all', array('conditions'=>$conds, 'order'=>$order)), '{n}.Attachment');
 			$this->set(array(
 				'attachments' => $attachments,
 				'_serialize' => array('attachments')
@@ -140,6 +143,23 @@
 			}
 			$this->_exit_status($return_data);
 		}
+
+		/**
+		 * sort multiple files for a single foreign_key
+		 * requires the order field on the attachments table
+		 *
+		 * Date Added: Tue, Sep 09, 2014
+		 */
+		public function admin_update_order(){
+			$saved = $this->Attachment->saveAll($this->request->data);
+			if($saved){
+				$response = ['status'=>1, 'message'=>'Order Updated'];
+			}else{
+				$response = ['status'=>0, 'message'=>'Order failed to update'];
+			}
+			$this->_exit_status($response);
+		}
+
 
 
 		/**
