@@ -46,7 +46,10 @@ class ImageEditorComponent extends Component{
 		if(empty($this->Controller->request->data['Image']['img']['name']) && !empty($this->Controller->request->data['Image']['image_storage'])){
 			// No new file was uploaded so lets persist the old one.
 			// If they made transformations, we will catch that too.
-			$this->Controller->request->data['Image']['img'] = 'http://'.$_SERVER['SERVER_NAME'].$this->Controller->request->data['Image']['image_storage'];
+			$file = str_replace('http://'.$_SERVER['SERVER_NAME'], '', $this->Controller->request->data['Image']['image_storage']);
+			$name = basename($this->Controller->request->data['Image']['image_storage']);
+			copy(APP.'webroot/'.$file, TMP.$name);
+			$this->Controller->request->data['Image']['img'] = TMP.$name;
 		}
 	}
 
