@@ -14,7 +14,9 @@
 		// Set the correct location for the resized and thumb sizes. 
 		function editableImageBeforeUpload($Model, $options){
 			$this->model = $Model;
-			$options['append'] = time();
+			// Not sure why this works but check the image editor component for how this gets replaced.
+			// If not, included the image will continuously append a -1
+			$options['append'] = 'appended';
 			if(!empty($this->model->data[$this->model->alias]['crop_x1'])){
 
 				$options['transforms']['thumb']['location'] = 'center';

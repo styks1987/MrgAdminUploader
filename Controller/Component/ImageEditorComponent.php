@@ -47,7 +47,8 @@ class ImageEditorComponent extends Component{
 			// No new file was uploaded so lets persist the old one.
 			// If they made transformations, we will catch that too.
 			$file = str_replace('http://'.$_SERVER['SERVER_NAME'], '', $this->Controller->request->data['Image']['image_storage']);
-			$name = basename($this->Controller->request->data['Image']['image_storage']);
+			// We replace because without it the system would continuously attache -1appened to the file names making them super long.
+			$name = str_replace('-1appended', '', basename($this->Controller->request->data['Image']['image_storage']));
 			copy(APP.'webroot/'.$file, TMP.$name);
 			$this->Controller->request->data['Image']['img'] = TMP.$name;
 		}
