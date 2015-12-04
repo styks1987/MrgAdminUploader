@@ -10,9 +10,9 @@
 			// Load our required assets
 			$this->Html->css('MrgAdminUploader.image_editor', 'stylesheet', ['inline'=>false]);
 			$this->Html->css('MrgAdminUploader.imageareaselect/imgareaselect-animated', 'stylesheet', ['inline'=>false]);
-			$this->Html->script('MrgAdminUploader.jquery.upload.1.0.2', ['inline'=>false]);
-			$this->Html->script('MrgAdminUploader.image_editor_widget', ['inline'=>false]);
-			$this->Html->script('MrgAdminUploader.imageareaselect/jquery.imgareaselect', ['inline'=>false]);
+//			$this->Html->script('MrgAdminUploader.jquery.upload.1.0.2', ['inline'=>false]);
+//			$this->Html->script('MrgAdminUploader.image_editor_widget', ['inline'=>false]);
+//			$this->Html->script('MrgAdminUploader.imageareaselect/jquery.imgareaselect', ['inline'=>false]);
 
 
 			list($parent_model, $image_model) = explode('.',$model);
@@ -75,9 +75,9 @@
 
 		function multi_file_init($foreign_key_id = 0, $model){
 			$this->Html->css('MrgAdminUploader.multifile_uploader', 'stylesheet', array("inline"=>false));
-			$this->Html->script('MrgAdminUploader.jquery.filedrop', array("inline"=>false));
-			$this->Html->script('MrgAdminUploader.jquery.nested_sortable', array("inline"=>false));
-			$this->Html->script('MrgAdminUploader.multifile_uploader', array("inline"=>false));
+//			$this->Html->script('MrgAdminUploader.jquery.filedrop', array("inline"=>false));
+//			$this->Html->script('MrgAdminUploader.jquery.nested_sortable', array("inline"=>false));
+//			$this->Html->script('MrgAdminUploader.multifile_uploader', array("inline"=>false));
 			return
 				$this->Html->div('',
 					$this->Html->div('message', 'Drop images here to upload'),
