@@ -6,6 +6,11 @@ $(function(){
     var dropbox = $('#dropbox'),
         message = $('.message', dropbox);
 
+	if(typeof attachment_foreign_key == 'undefined' || typeof attachment_foreign_model == 'undefined'){
+		console.log('key or model not specified. shutting down attachment');
+		return;
+	}
+
     dropbox.filedrop({
         // The name of the $_FILES entry:
         paramname:'data[Attachment][img]',
