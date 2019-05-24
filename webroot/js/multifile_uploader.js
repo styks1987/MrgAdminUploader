@@ -13,8 +13,8 @@ $(function(){
 
     dropbox.filedrop({
         // The name of the $_FILES entry:
+        fallback_id: 'dropbox',
         paramname:'data[Attachment][img]',
-
         maxfiles: 200,
     	maxfilesize: 15, // in mb
 		url: '/admin/mrg_admin_uploader/attachments/multifile_ajax_upload/'+attachment_foreign_key+'/'+attachment_foreign_model,
