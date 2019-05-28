@@ -13,7 +13,7 @@ $(function(){
 
     dropbox.filedrop({
         // The name of the $_FILES entry:
-        fallback_id: 'dropbox',
+        fallback_id: 'dropzone',
         paramname:'data[Attachment][img]',
         maxfiles: 200,
     	maxfilesize: 15, // in mb
