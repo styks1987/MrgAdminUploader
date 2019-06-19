@@ -34,17 +34,23 @@
 
 		public function admin_update($id) {
 			if($this->request->is('post') || $this->request->is('put') ){
+				$model = $this->request->data['model'];
+				$behavior = 'Attachment';
+				$class = 'Image';
+				App::import('Model', $model);
+				$this->$model = new $model();
+				$this->Attachment->Behaviors->{$behavior}->settings['Attachment'] = hash::merge(
+					$this->Attachment->Behaviors->{$behavior}->settings['Attachment'],
+					$this->$model->hasMany[$class]['Behaviors'][$behavior]
+				);
 				if ($this->Attachment->save($this->request->data)) {
-					$message = 'Deleted';
+					$message = 'Updated';
 				} else {
 					$message = 'Error';
 				}
 			}
-			$this->set(array(
-				'message' => $message,
-				'_serialize' => array('message')
-			));
-			exit;
+			$attachment = $this->Attachment->find('first', array('conditions' => ['id' => $id]));
+			$this->_exit_status($attachment['Attachment']);
 		}
 
 		/**
