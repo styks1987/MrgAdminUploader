@@ -258,7 +258,7 @@ $(function(){
 		saveRotation: function (e) {
 			e.preventDefault();
 			this.model.set('saving', true);
-			const policy = filestackSignature.getFilestackPolicy(moment().unix() + 500, 'convert');
+			const policy = filestackSignature.getFilestackPolicy(moment().unix() + 500, ['convert', 'store']);
 			const signature = filestackSignature.getFilestackSignature(policy, filestackSecret)
 			const rotation = this.model.get('rotation');
 			const cdnUrl = `https://cdn.filestackcontent.com/ABNjhyUWiSVyynPgT99BEz`;
