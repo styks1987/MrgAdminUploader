@@ -39,8 +39,11 @@
 				$class = 'Image';
 				App::import('Model', $model);
 				$this->$model = new $model();
+				$defaultSettings = $this->Attachment->Behaviors->{$behavior}->settings['Attachment'];
+				$defaultSettings['img']['cleanup'] = false;
+				$defaultSettings['file']['cleanup'] = false;
 				$this->Attachment->Behaviors->{$behavior}->settings['Attachment'] = hash::merge(
-					$this->Attachment->Behaviors->{$behavior}->settings['Attachment'],
+					$defaultSettings,
 					$this->$model->hasMany[$class]['Behaviors'][$behavior]
 				);
 				if ($this->Attachment->save($this->request->data)) {
