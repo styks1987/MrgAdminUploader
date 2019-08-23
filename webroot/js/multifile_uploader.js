@@ -6,6 +6,12 @@ $(function(){
     var dropbox = $('#dropbox'),
         message = $('.message', dropbox);
 
+    // if we did not properly define these properties, then we cannot do any rotation
+    var enableImageRotation = false;
+    if(typeof moment !== 'undefined' && typeof filestackSignature !== 'undefined'){
+    	enableImageRotation = true;
+	}
+
 	if(typeof attachment_foreign_key == 'undefined' || typeof attachment_foreign_model == 'undefined'){
 		console.log('key or model not specified. shutting down attachment');
 		return;
@@ -13,8 +19,8 @@ $(function(){
 
     dropbox.filedrop({
         // The name of the $_FILES entry:
+        fallback_id: 'dropzone',
         paramname:'data[Attachment][img]',
-
         maxfiles: 200,
     	maxfilesize: 15, // in mb
 		url: '/admin/mrg_admin_uploader/attachments/multifile_ajax_upload/'+attachment_foreign_key+'/'+attachment_foreign_model,
@@ -122,7 +128,9 @@ $(function(){
 	// necessary for the project images uploading
 	AttachmentModel = Backbone.Model.extend({
 		defaults: {
-			attachment_foreign_key: attachment_foreign_key
+			attachment_foreign_key: attachment_foreign_key,
+			rotation: 0,
+			saving: false
 		},
 		url: '/admin/mrg_admin_uploader/attachments.json',
 		sync: function(method, model, options) {
@@ -143,24 +151,50 @@ $(function(){
 
 	image = new AttachmentModel({
 		url:'/admin/mrg_admin_uploader/attachments.json'
-	})
+	});
 
+    let imageRotationTemplate = '';
+
+    if(enableImageRotation){
+    	imageRotationTemplate = `
+    		<div style="display: flex; justify-content: space-between">
+				<button class="btn rotate-left"><i class="fa fa-rotate-left" /></button>
+				<% if (rotation > 0) { %>
+					<% if (saving === true) {%>
+					<button class="btn btn-success" disabled="disabled">Saving...</button>
+					<% } else { %>
+					<button class="btn btn-success save-rotation">Save Rotation</button>
+					<% } %>
+				<% } %>
+				<button class="btn rotate-right"><i class="fa fa-rotate-right" /></button>
+			</div>
+    	`
+	}
 
 	AttachmentView = Backbone.View.extend({
 		className: 'pod',
 		initialize: function(){
 			this.model.on('delete', this.deleteImage, this);
+			this.model.on('change', this.render, this);
+			this.model.on('sync', function (model, resposne) {
+				this.model.set('rotation', 0);
+				this.model.set('saving', false);
+			}.bind(this), this);
 		},
 		template: _.template(
-			'<div class="image_holder"><img src="<%= thumb %>" alt="<%= name %>" /></div>'+
-			'<div style="display:none;" property="id"><%= id %></div>'+
-			'<h4 property="title" class="title">Title<br /><input class="form-control" name="title" value="<%= title %>" /></h4>'+
-			'<p property="caption" class="caption">Comments<br /><input class="form-control" name="caption" value="<%= caption %>" /></p>'+
-			'<div class="btn btn-danger delete">Delete</div>'
+			`<div class="image_holder" style="transform: rotate(<%= rotation %>deg);"><img src="<%= thumb %>" alt="<%= name %>" /></div>
+			<div style="display:none;" property="id"><%= id %></div>
+			${imageRotationTemplate}
+			<h4 property="title" class="title">Title<br /><input class="form-control" name="title" value="<%= title %>" /></h4>
+			<p property="caption" class="caption">Comments<br /><input class="form-control" name="caption" value="<%= caption %>" /></p>
+			<div class="btn btn-danger delete">Delete</div>`
 		),
 		events:{
 			"click img":"_ckselect",
 			"click .delete":"deleteImage",
+			"click .rotate-left": "rotateLeft",
+			"click .rotate-right": "rotateRight",
+			"click .save-rotation": "saveRotation",
 			"drop":"reorder",
 			'change input[name="title"]' : 'updateAttachment',
 			'change input[name="caption"]' : 'updateAttachment'
@@ -196,8 +230,52 @@ $(function(){
 				ids.push({Attachment:{id:$(this).html(),order_by:i}});
 				i++;
 			});
-			console.log(ids);
 			$.ajax({url:'/admin/mrg_admin_uploader/attachments/update_order',data: {data:ids}, method:'post'});
+		},
+
+		rotateLeft: function (e) {
+			e.preventDefault();
+			this.rotateImage(-90);
+		},
+
+		rotateRight: function (e) {
+			e.preventDefault();
+			this.rotateImage(90);
+		},
+
+		rotateImage: function (deg) {
+			let rotation = this.model.get('rotation');
+			rotation += deg;
+			if(rotation < 0){
+				rotation = 360 + rotation;
+			}
+			if(rotation === 360){
+				rotation = 0;
+			}
+			this.model.set('rotation', rotation);
+		},
+
+		saveRotation: function (e) {
+			e.preventDefault();
+			this.model.set('saving', true);
+			const policy = filestackSignature.getFilestackPolicy(moment().unix() + 500, ['convert', 'store']);
+			const signature = filestackSignature.getFilestackSignature(policy, filestackSecret)
+			const rotation = this.model.get('rotation');
+			const cdnUrl = `https://cdn.filestackcontent.com/ABNjhyUWiSVyynPgT99BEz`;
+			const rotatedUrl = [cdnUrl];
+			const security = `security=p:${policy},s:${signature}`;
+			rotatedUrl.push(security);
+			rotatedUrl.push(`rotate=deg:${rotation}`);
+			rotatedUrl.push(`store=location:s3,container:heavy-crane-salvage,access:public`);
+			rotatedUrl.push(this.model.get('img'));
+
+			$.ajax({
+				url: rotatedUrl.join('/'),
+				complete: function (response) {
+					this.model.set('img', 'https://s3.amazonaws.com/heavy-crane-salvage/' + response.responseJSON.key);
+					this.model.save();
+				}.bind(this)
+			});
 		},
 
 		// return the selected image back to ckeditor
